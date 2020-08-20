@@ -13,6 +13,7 @@ const logUpdate = require('log-update');
 const frames = ['-', '\\', '|', '/'];
 let i = 0;
 let percentage = 0;
+let percentage2 = 0;
 let speed = `0 KBs`;
 
 function roundNum(num) {
@@ -21,7 +22,7 @@ function roundNum(num) {
 const id = setInterval(() => {
 	const frame = frames[i = ++i % frames.length];
 	logUpdate(
-`♥ Running: ${Math.round((percentage + Number.EPSILON) * 100) / 100}% complete... | ${speed} ${frame} ♥`
+`♥ Running: ${Math.round((percentage + Number.EPSILON) * 100) / 100}% complete... | ${roundNum(percentage2)} | ${speed} ${frame} ♥`
 	);
 }, 80);
 
@@ -40,12 +41,13 @@ function toSpeedStr(bytes, time) {
   
   const days = Object.keys(articles);
 
-  for(let ind = 0; ind < days.length; ind++ ) {
+  for(let ind = 0; ind < 1000; ind++ ) {
     const articleTitles = Object.keys(articles[days[ind]]);
     articleData[days[ind]] = {};
 
     for(let articleInd = 0; articleInd < articleTitles.length; articleInd++) {
-      percentage = ind/days.length + (articleInd / (articleTitles.length)) * (100/days.length);
+      percentage = (ind/1000) * 100 + (articleInd / (articleTitles.length)) * (100/1000);
+      percentage2 = (articleInd / (articleTitles.length)) * (100);
       // console.log(percentage);
       const url = articles[days[ind]][articleTitles[articleInd]];
       const startTime = Date.now();
@@ -63,7 +65,11 @@ function toSpeedStr(bytes, time) {
         })).window;
         const articleMetadata = document.evaluate("/html/body//script[@type='application/ld+json'][1]", document, null, 7, null);
         if (articleMetadata.snapshotLength > 0) {
-          articleData[days[ind]][articleTitles[articleInd]] = JSON.parse(articleMetadata.snapshotItem(0).textContent);
+          try{
+            articleData[days[ind]][articleTitles[articleInd]] = JSON.parse(articleMetadata.snapshotItem(0).textContent);
+          } catch {
+            console.log('err');
+          }
         }
       }
     }
