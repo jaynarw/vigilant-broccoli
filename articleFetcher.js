@@ -37,7 +37,6 @@ function toSpeedStr(bytes, time) {
   const articlesJSON = await readFile('Articles.json');
 
   let articles = JSON.parse(articlesJSON);
-  articles = { '44063' : articles['44063'] };
   
   const days = Object.keys(articles);
 
