@@ -41,12 +41,12 @@ function toSpeedStr(bytes, time) {
   
   const days = Object.keys(articles);
 
-  for(let ind = 0; ind < 1000; ind++ ) {
+  for(let ind = 1000; ind < 2000; ind++ ) {
     const articleTitles = Object.keys(articles[days[ind]]);
     articleData[days[ind]] = {};
 
     for(let articleInd = 0; articleInd < articleTitles.length; articleInd++) {
-      percentage = (ind/1000) * 100 + (articleInd / (articleTitles.length)) * (100/1000);
+      percentage = ((ind - 1000)/1000) * 100 + (articleInd / (articleTitles.length)) * (100/1000);
       percentage2 = (articleInd / (articleTitles.length)) * (100);
       // console.log(percentage);
       const url = articles[days[ind]][articleTitles[articleInd]];
