@@ -13,19 +13,31 @@ const logUpdate = require('log-update');
 const frames = ['-', '\\', '|', '/'];
 let i = 0;
 let percentage = 0;
+let speed = `0 KBs`;
+
+function roundNum(num) {
+  return Math.round((num + Number.EPSILON) * 100) / 100;
+}
 const id = setInterval(() => {
 	const frame = frames[i = ++i % frames.length];
 	logUpdate(
-`♥ Running: ${Math.round((percentage + Number.EPSILON) * 100) / 100}% complete... ${frame} ♥`
+`♥ Running: ${Math.round((percentage + Number.EPSILON) * 100) / 100}% complete... | ${speed} ${frame} ♥`
 	);
 }, 80);
+
+function toSpeedStr(bytes, time) {
+  if (bytes/time < 1) {
+    return `${roundNum((bytes * 1000)/time)} B/s`;
+  }
+  return `${roundNum(bytes/time)} kB/s`;
+}
 
 (async () => {
   
   const articlesJSON = await readFile('Articles.json');
 
   let articles = JSON.parse(articlesJSON);
-  articles = { '44062' : articles['44062'] };
+  articles = { '44063' : articles['44063'] };
   
   const days = Object.keys(articles);
 
@@ -37,7 +49,11 @@ const id = setInterval(() => {
       percentage = ind/days.length + (articleInd / (articleTitles.length)) * (100/days.length);
       // console.log(percentage);
       const url = articles[days[ind]][articleTitles[articleInd]];
+      const startTime = Date.now();
       const response = await fetch(url);
+      const endTime = Date.now();
+      const bytes = response.headers.get("content-length");
+      speed = toSpeedStr(bytes, endTime - startTime);
       if(response.status === 200) {
         const html = await response.text();
         const virtualConsole = new jsdom.VirtualConsole();
