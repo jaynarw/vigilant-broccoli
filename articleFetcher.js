@@ -10,7 +10,6 @@ const { JSDOM } = jsdom;
 const articleData = {};
 
 const logUpdate = require('log-update');
-const { start } = require('repl');
 
 const frames = ['-', '\\', '|', '/'];
 let i = 0;
@@ -87,11 +86,11 @@ async function fetchArticle(url, dayId, articleTitle) {
     const articleTitles = Object.keys(articles[days[ind]]);
     articleData[days[ind]] = {};
 
-    for (let articleInd = 0; articleInd < articleTitles.length; articleInd += 25) {
+    for (let articleInd = 0; articleInd < articleTitles.length; articleInd += 500) {
       percentage = ((ind - startIndex) / (endIndex - startIndex)) * 100 + (articleInd / (articleTitles.length)) * (100 / (endIndex - startIndex));
       percentage2 = (articleInd / (articleTitles.length)) * (100);
       const articlesRequests = [];
-      for (let ind2 = articleInd; ind2 < articleInd + 25 && ind2 < articleTitles.length; ind2 += 1) {
+      for (let ind2 = articleInd; ind2 < articleInd + 500 && ind2 < articleTitles.length; ind2 += 1) {
         const url = articles[days[ind]][articleTitles[ind2]];
         articlesRequests.push(fetchArticle(url, days[ind], articleTitles[ind2]));
       }
