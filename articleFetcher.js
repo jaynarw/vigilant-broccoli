@@ -68,6 +68,7 @@ async function fetchArticle(url, dayId, articleTitle) {
         try {
           articleData[dayId][articleTitle] = JSON.parse(articleMetadata.snapshotItem(0).textContent.replace(/[\u0000-\u0019]+/g, ''));
         } catch {
+          articleData[dayId][articleTitle] = articleMetadata.snapshotItem(0).textContent;
           console.log(url);
         }
       }
