@@ -83,19 +83,20 @@ async function fetchArticle(url, dayId, articleTitle) {
   const days = Object.keys(articles);
 
   for (let ind = startIndex; ind < endIndex; ind += 1) {
-    const articleTitles = Object.keys(articles[days[ind]]);
-    articleData[days[ind]] = {};
-
-    for (let articleInd = 0; articleInd < articleTitles.length; articleInd += 500) {
-      percentage = ((ind - startIndex) / (endIndex - startIndex)) * 100 + (articleInd / (articleTitles.length)) * (100 / (endIndex - startIndex));
-      percentage2 = (articleInd / (articleTitles.length)) * (100);
-      const articlesRequests = [];
-      for (let ind2 = articleInd; ind2 < articleInd + 500 && ind2 < articleTitles.length; ind2 += 1) {
-        const url = articles[days[ind]][articleTitles[ind2]];
-        articlesRequests.push(fetchArticle(url, days[ind], articleTitles[ind2]));
+    if (days[ind] && articles[days[ind]]) {
+      const articleTitles = Object.keys(articles[days[ind]]);
+      articleData[days[ind]] = {};
+      for (let articleInd = 0; articleInd < articleTitles.length; articleInd += 500) {
+        percentage = ((ind - startIndex) / (endIndex - startIndex)) * 100 + (articleInd / (articleTitles.length)) * (100 / (endIndex - startIndex));
+        percentage2 = (articleInd / (articleTitles.length)) * (100);
+        const articlesRequests = [];
+        for (let ind2 = articleInd; ind2 < articleInd + 500 && ind2 < articleTitles.length; ind2 += 1) {
+          const url = articles[days[ind]][articleTitles[ind2]];
+          articlesRequests.push(fetchArticle(url, days[ind], articleTitles[ind2]));
+        }
+        await Promise.allSettled(articlesRequests);
+        // console.log(percentage);
       }
-      await Promise.allSettled(articlesRequests);
-      // console.log(percentage);
     }
   }
   fs.writeFile(`${startIndex}-${endIndex - 1}.json`, JSON.stringify(articleData), (err) => {
